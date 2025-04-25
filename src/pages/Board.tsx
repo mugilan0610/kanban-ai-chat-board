@@ -1,6 +1,5 @@
-
-import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -54,103 +53,55 @@ type List = {
   cards: Card[];
 };
 
-// Mock data for a single board
-const initialBoardData: { lists: List[] } = {
-  lists: [
-    {
-      id: "list-1",
-      title: "To Do",
-      cards: [
-        {
-          id: "card-1",
-          title: "Research competitors",
-          description: "Analyze top 5 competitors in the market",
-          tags: [{ id: "tag-1", name: "Research", color: "blue" }],
-          deadline: "2025-05-15",
-          comments: [
-            {
-              id: "comment-1",
-              text: "I've started with the first two competitors.",
-              user: "Jane Smith",
-              timestamp: "2025-04-20T10:30:00Z",
-            },
-          ],
-          checklist: [
-            { id: "check-1", text: "Identify competitors", completed: true },
-            { id: "check-2", text: "Collect pricing data", completed: false },
-            { id: "check-3", text: "Analyze features", completed: false },
-          ],
-          watchers: ["Jane Smith", "John Doe"],
-        },
-        {
-          id: "card-2",
-          title: "Create content calendar",
-          description: "Plan content for next quarter",
-          tags: [
-            { id: "tag-2", name: "Marketing", color: "green" },
-            { id: "tag-3", name: "Content", color: "purple" },
-          ],
-          deadline: "2025-05-10",
-          comments: [],
-          checklist: [],
-          watchers: ["Jane Smith"],
-        },
-      ],
-    },
-    {
-      id: "list-2",
-      title: "In Progress",
-      cards: [
-        {
-          id: "card-3",
-          title: "Design new landing page",
-          description: "Create wireframes and mockups for the new product landing page",
-          tags: [{ id: "tag-4", name: "Design", color: "pink" }],
-          deadline: "2025-05-05",
-          comments: [
-            {
-              id: "comment-2",
-              text: "The initial wireframes are ready for review.",
-              user: "Alex Johnson",
-              timestamp: "2025-04-22T14:15:00Z",
-            },
-          ],
-          checklist: [
-            { id: "check-4", text: "Create wireframes", completed: true },
-            { id: "check-5", text: "Design mockups", completed: false },
-            { id: "check-6", text: "Get feedback", completed: false },
-          ],
-          watchers: ["Alex Johnson", "Jane Smith"],
-        },
-      ],
-    },
-    {
-      id: "list-3",
-      title: "Done",
-      cards: [
-        {
-          id: "card-4",
-          title: "Update privacy policy",
-          description: "Review and update privacy policy to comply with latest regulations",
-          tags: [{ id: "tag-5", name: "Legal", color: "red" }],
-          deadline: "2025-04-20",
-          comments: [],
-          checklist: [
-            { id: "check-7", text: "Review current policy", completed: true },
-            { id: "check-8", text: "Draft updates", completed: true },
-            { id: "check-9", text: "Get legal approval", completed: true },
-            { id: "check-10", text: "Publish updates", completed: true },
-          ],
-          watchers: ["John Doe"],
-        },
-      ],
-    },
-  ],
-};
-
 const Board = () => {
   const { id } = useParams<{ id: string }>();
-  const [boardData, setBoardData] = useState(initialBoardData);
+  const navigate = useNavigate();
+  const [boardData, setBoardData] = useState<any>(null);
+  const { toast } = useToast();
+
+  // Load board data from localStorage
+  useEffect(() => {
+    const savedBoards = localStorage.getItem("kanbanBoards");
+    if (savedBoards) {
+      const boards = JSON.parse(savedBoards);
+      const currentBoard = boards.find((board: any) => board.id === id);
+      
+      if (currentBoard) {
+        // Load or initialize lists for this board
+        const savedBoardData = localStorage.getItem(`board-${id}`);
+        if (savedBoardData) {
+          setBoardData(JSON.parse(savedBoardData));
+        } else {
+          // Initialize new board with empty lists
+          const initialBoardData = {
+            lists: [
+              { id: "list-1", title: "To Do", cards: [] },
+              { id: "list-2", title: "In Progress", cards: [] },
+              { id: "list-3", title: "Done", cards: [] }
+            ]
+          };
+          setBoardData(initialBoardData);
+          localStorage.setItem(`board-${id}`, JSON.stringify(initialBoardData));
+        }
+      } else {
+        // Board not found, redirect to boards list
+        toast({
+          title: "Board not found",
+          description: "The requested board could not be found.",
+          variant: "destructive",
+        });
+        navigate("/boards");
+      }
+    }
+  }, [id, navigate]);
+
+  // Save board data whenever it changes
+  useEffect(() => {
+    if (boardData) {
+      localStorage.setItem(`board-${id}`, JSON.stringify(boardData));
+    }
+  }, [boardData, id]);
+
   const [isAddListDialogOpen, setIsAddListDialogOpen] = useState(false);
   const [newListTitle, setNewListTitle] = useState("");
   const [isAddCardDialogOpen, setIsAddCardDialogOpen] = useState(false);
@@ -159,7 +110,6 @@ const Board = () => {
   const [newCardDescription, setNewCardDescription] = useState("");
   const [editingListId, setEditingListId] = useState<string | null>(null);
   const [editedListTitle, setEditedListTitle] = useState("");
-  const { toast } = useToast();
 
   // Drag and drop handler
   const handleDragEnd = (result: any) => {
@@ -358,6 +308,10 @@ const Board = () => {
       description: `"${newCardTitle}" card has been added successfully.`,
     });
   };
+
+  if (!boardData) {
+    return <div className="p-6">Loading board...</div>;
+  }
 
   return (
     <div className="h-full">

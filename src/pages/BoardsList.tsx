@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,8 +9,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { useToast } from "@/components/ui/use-toast";
 import { Label } from "@/components/ui/label";
 
-// Mock data
-const initialBoards = [
+// Initial boards data if none exists in localStorage
+const defaultBoards = [
   { id: "1", title: "Product Launch", description: "Q2 product launch tasks and timeline", createdAt: new Date().toISOString() },
   { id: "2", title: "Marketing Campaign", description: "Social media marketing campaign planning", createdAt: new Date().toISOString() },
   { id: "3", title: "Website Redesign", description: "Website redesign project board", createdAt: new Date().toISOString() },
@@ -21,8 +21,24 @@ const BoardsList = () => {
   const [newBoardTitle, setNewBoardTitle] = useState("");
   const [newBoardDescription, setNewBoardDescription] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  const [boards, setBoards] = useState(initialBoards);
+  const [boards, setBoards] = useState<typeof defaultBoards>([]);
   const { toast } = useToast();
+
+  // Load boards from localStorage on component mount
+  useEffect(() => {
+    const savedBoards = localStorage.getItem("kanbanBoards");
+    if (savedBoards) {
+      setBoards(JSON.parse(savedBoards));
+    } else {
+      setBoards(defaultBoards);
+      localStorage.setItem("kanbanBoards", JSON.stringify(defaultBoards));
+    }
+  }, []);
+
+  // Save boards to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("kanbanBoards", JSON.stringify(boards));
+  }, [boards]);
 
   const handleCreateBoard = () => {
     if (!newBoardTitle.trim()) {
@@ -41,7 +57,8 @@ const BoardsList = () => {
       createdAt: new Date().toISOString(),
     };
 
-    setBoards([newBoard, ...boards]);
+    const updatedBoards = [newBoard, ...boards];
+    setBoards(updatedBoards);
     setIsDialogOpen(false);
     setNewBoardTitle("");
     setNewBoardDescription("");
@@ -49,6 +66,15 @@ const BoardsList = () => {
     toast({
       title: "Board created",
       description: `"${newBoardTitle}" board has been created successfully.`,
+    });
+  };
+
+  const handleDeleteBoard = (boardId: string) => {
+    const updatedBoards = boards.filter(board => board.id !== boardId);
+    setBoards(updatedBoards);
+    toast({
+      title: "Board deleted",
+      description: "The board has been deleted successfully.",
     });
   };
 
