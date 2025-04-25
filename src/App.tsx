@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -12,12 +11,12 @@ import BoardsList from "./pages/BoardsList";
 import Board from "./pages/Board";
 import Analytics from "./pages/Analytics";
 import NotFound from "./pages/NotFound";
+import Profile from "./pages/Profile";
 import { useEffect } from "react";
 
 const queryClient = new QueryClient();
 
 const App = () => {
-  // Set up theme on initial load
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme") || 
       (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
@@ -42,6 +41,7 @@ const App = () => {
             <Route path="/boards" element={<AppLayout><BoardsList /></AppLayout>} />
             <Route path="/board/:id" element={<AppLayout><Board /></AppLayout>} />
             <Route path="/analytics" element={<AppLayout><Analytics /></AppLayout>} />
+            <Route path="/profile" element={<AppLayout><Profile /></AppLayout>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

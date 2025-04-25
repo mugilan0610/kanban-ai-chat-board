@@ -12,7 +12,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
-import { BarChart3, LogIn, Plus, Settings, Layout } from "lucide-react";
+import { BarChart3, LogIn, Plus, Settings, Layout, UserCog } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 
@@ -32,17 +32,33 @@ export function AppSidebar() {
         {isLoggedIn ? (
           <>
             <SidebarGroup>
-              <SidebarGroupLabel>Workspace</SidebarGroupLabel>
+              <SidebarGroupLabel>Boards</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/boards">
                         <Layout className="h-4 w-4" />
-                        <span>Boards</span>
+                        <span>All Boards</span>
                       </Link>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/boards/new">
+                        <Plus className="h-4 w-4" />
+                        <span>Create Board</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                </SidebarMenu>
+              </SidebarGroupContent>
+            </SidebarGroup>
+
+            <SidebarGroup>
+              <SidebarGroupLabel>Statistics</SidebarGroupLabel>
+              <SidebarGroupContent>
+                <SidebarMenu>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/analytics">
@@ -54,10 +70,19 @@ export function AppSidebar() {
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>
+
             <SidebarGroup>
-              <SidebarGroupLabel>Settings</SidebarGroupLabel>
+              <SidebarGroupLabel>User Settings</SidebarGroupLabel>
               <SidebarGroupContent>
                 <SidebarMenu>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild>
+                      <Link to="/profile">
+                        <UserCog className="h-4 w-4" />
+                        <span>Profile</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/settings">
