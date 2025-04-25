@@ -12,7 +12,7 @@ import {
   SidebarGroupContent,
   SidebarGroupLabel,
 } from "@/components/ui/sidebar";
-import { BarChart3, LayoutBoard, LogIn, Plus, Settings } from "lucide-react";
+import { BarChart3, LogIn, Plus, Settings, Layout } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 
@@ -23,7 +23,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarHeader className="border-b border-border/50 p-4">
         <div className="flex items-center gap-2">
-          <LayoutBoard className="h-6 w-6 text-primary" />
+          <Layout className="h-6 w-6 text-primary" />
           <span className="font-bold">Kanban</span>
         </div>
         <SidebarTrigger />
@@ -38,7 +38,7 @@ export function AppSidebar() {
                   <SidebarMenuItem>
                     <SidebarMenuButton asChild>
                       <Link to="/boards">
-                        <LayoutBoard className="h-4 w-4" />
+                        <Layout className="h-4 w-4" />
                         <span>Boards</span>
                       </Link>
                     </SidebarMenuButton>
