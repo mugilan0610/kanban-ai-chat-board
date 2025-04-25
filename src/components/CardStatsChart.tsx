@@ -24,8 +24,12 @@ export function CardStatsChart({ data }: { data: CardStats[] }) {
               <YAxis />
               <Tooltip />
               <Bar dataKey="count" fill="#8B5CF6">
-                {data.map((_, index) => (
-                  <Bar key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                {data.map((entry, index) => (
+                  <Bar
+                    key={`cell-${index}`}
+                    dataKey="count"
+                    fill={COLORS[index % COLORS.length]}
+                  />
                 ))}
               </Bar>
             </BarChart>
