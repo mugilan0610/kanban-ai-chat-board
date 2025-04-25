@@ -10,7 +10,8 @@ There are several ways of editing your application.
 
 **Use Lovable**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9c7a3875-571e-4759-9f34-c1ca89495d3c) and start prompting.    *link*(kanban-ai-chat-board.lovable.app)
+Simply visit the [Lovable Project](https://lovable.dev/projects/9c7a3875-571e-4759-9f34-c1ca89495d3c) and start prompting.  
+[Lovable Project](kanban-ai-chat-board.lovable.app)  
 
 Changes made via Lovable will be committed automatically to this repo.
 
