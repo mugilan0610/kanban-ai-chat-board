@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Calendar, Tag, CheckSquare, User, Plus } from "lucide-react";
 import { format } from "date-fns";
@@ -6,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
+import { AiTaskSuggestions } from "./AiTaskSuggestions";
+import { CardStatsChart } from "./CardStatsChart";
 
 // Types
 type CardTag = {
@@ -67,6 +68,13 @@ export function CardDetailView({ card }: CardDetailViewProps) {
     return colorMap[color] || "tag-gray";
   };
 
+  const cardStats = [
+    { name: 'Checklist', count: card.checklist.length },
+    { name: 'Comments', count: card.comments.length },
+    { name: 'Tags', count: card.tags.length },
+    { name: 'Watchers', count: card.watchers.length },
+  ];
+
   return (
     <div className="space-y-6">
       {/* Description */}
@@ -97,6 +105,16 @@ export function CardDetailView({ card }: CardDetailViewProps) {
           </p>
         )}
       </div>
+
+      <Separator />
+
+      {/* Card Statistics */}
+      <CardStatsChart data={cardStats} />
+
+      <Separator />
+
+      {/* AI Task Suggestions */}
+      <AiTaskSuggestions cardTitle={card.title} cardDescription={card.description} />
 
       <Separator />
 
